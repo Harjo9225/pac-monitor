@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#3a7bd5">
+  <title>PAC Monitor</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <!-- Modal per login e biometria -->
+  <div id="authModal" class="modal">
+    <div class="modal-content">
+      <h2 class="modal-title"><i class="fas fa-lock"></i> Autenticazione</h2>
+      <div id="loginForm">
+        <div id="loginError" class="error-message"></div>
+        <input type="password" id="pinInput" placeholder="Inserisci il tuo PIN" maxlength="6">
+        <div class="modal-actions">
+          <button class="modal-button" id="loginBtn">Accedi</button>
+          <button class="modal-button biometric" id="biometricBtn">
+            <i class="fas fa-fingerprint"></i> Biometria
+          </button>
+          <button class="modal-button cancel" id="cancelBtn">Annulla</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Barra laterale strumenti -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h3>Strumenti</h3>
+      <button class="close-sidebar" id="closeSidebar">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="tools-section">
+      <h4><i class="fas fa-calculator"></i> Calcolatori</h4>
+      <button class="tool-button">
+        <i class="fas fa-percentage"></i> Calcolatore Tasse
+      </button>
+      <button class="tool-button">
+        <i class="fas fa-chart-line"></i> Calcolatore Rendimento
+      </button>
+      <button class="tool-button">
+        <i class="fas fa-euro-sign"></i> Calcolatore Valuta
+      </button>
+    </div>
+    
+    <div class="tools-section">
+      <h4><i class="fas fa-file-import"></i> Importazione</h4>
+      <button class="tool-button" id="importCsvBtn">
+        <i class="fas fa-file-csv"></i> Importa CSV
+      </button>
+      <button class="tool-button" id="importExcelBtn">
+        <i class="fas fa-file-excel"></i> Importa Excel
+      </button>
+      <button class="tool-button" id="importPdfBtn">
+        <i class="fas fa-file-pdf"></i> Importa PDF
+      </button>
+    </div>
+    
+    <div class="tools-section">
+      <h4><i class="fas fa-file-export"></i> Esportazione</h4>
+      <button class="tool-button" id="exportCsvBtn">
+        <i class="fas fa-file-csv"></i> Esporta CSV
+      </button>
+      <button class="tool-button" id="exportExcelBtn">
+        <i class="fas fa-file-excel"></i> Esporta Excel
+      </button>
+      <button class="tool-button" id="exportPdfBtn">
+        <i class="fas fa-file-pdf"></i> Esporta PDF
+      </button>
+    </div>
+    
+    <div class="tools-section">
+      <h4><i class="fas fa-cog"></i> Impostazioni</h4>
+      <button class="tool-button" id="profileBtn">
+        <i class="fas fa-user"></i> Profilo
+      </button>
+      <button class="tool-button" id="notificationsBtn">
+        <i class="fas fa-bell"></i> Notifiche
+      </button>
+      <button class="tool-button" id="securityBtn">
+        <i class="fas fa-shield-alt"></i> Sicurezza
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenitore principale -->
+  <div class="app-container">
+    <!-- Schermata Mercato -->
+    <section id="marketScreen" class="screen active">
+      <div class="screen-header">
+        <h2 class="screen-title"><i class="fas fa-chart-line"></i> Mercato</h2>
+        <button class="menu-button" id="openSidebar">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      
+      <div id="marketSearch" style="margin-bottom: 1rem;">
+        <input type="text" id="searchInput" placeholder="Cerca ETF o Azione...">
+        <div id="searchError" class="error-message"></div>
+      </div>
+      
+      <div class="market-grid" id="marketGrid">
+        <!-- Dati di mercato verranno caricati qui -->
+      </div>
+    </section>
+    
+    <!-- Schermata Portafoglio -->
+    <section id="portfolioScreen" class="screen">
+      <div class="screen-header">
+        <h2 class="screen-title"><i class="fas fa-wallet"></i> Portafoglio</h2>
+        <button class="menu-button" id="openSidebar2">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      
+      <div class="portfolio-summary">
+        <div>Valore totale portafoglio</div>
+        <div class="portfolio-value" id="portfolioTotal">€ 24,582.36</div>
+        <div class="market-change positive" id="portfolioChange">
+          <i class="fas fa-caret-up"></i> +€ 1,245.78 (+5.3%) ultimi 30 giorni
+        </div>
+        
+        <div class="portfolio-stats">
+          <div class="stat-card">
+            <div class="stat-value" id="investedAmount">€ 18,245</div>
+            <div class="stat-label">Investito</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="gainAmount">€ 6,337</div>
+            <div class="stat-label">Guadagno</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="returnPercentage">34.7%</div>
+            <div class="stat-label">Rendimento</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="assetCount">8</div>
+            <div class="stat-label">Asset</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="performance-chart">
+        Grafico di performance (simulato)
+      </div>
+      
+      <h3><i class="fas fa-chart-pie"></i> Composizione portafoglio</h3>
+      
+      <div class="asset-list" id="assetList">
+        <!-- Asset verranno caricati qui -->
+      </div>
+    </section>
+    
+    <!-- Schermata Strumenti -->
+    <section id="toolsScreen" class="screen">
+      <div class="screen-header">
+        <h2 class="screen-title"><i class="fas fa-tools"></i> Strumenti</h2>
+        <button class="menu-button" id="openSidebar3">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      
+      <div class="tools-container">
+        <div class="tool-card" id="taxCalculator">
+          <div class="tool-icon"><i class="fas fa-calculator"></i></div>
+          <h4>Calcolatore Tasse</h4>
+        </div>
+        
+        <div class="tool-card" id="importDataTool">
+          <div class="tool-icon"><i class="fas fa-file-import"></i></div>
+          <h4>Importa Dati</h4>
+        </div>
+        
+        <div class="tool-card" id="exportDataTool">
+          <div class="tool-icon"><i class="fas fa-file-export"></i></div>
+          <h4>Esporta Dati</h4>
+        </div>
+        
+        <div class="tool-card" id="portfolioAnalysis">
+          <div class="tool-icon"><i class="fas fa-chart-pie"></i></div>
+          <h4>Analisi Portafoglio</h4>
+        </div>
+        
+        <div class="tool-card" id="assetComparison">
+          <div class="tool-icon"><i class="fas fa-balance-scale"></i></div>
+          <h4>Confronto Asset</h4>
+        </div>
+        
+        <div class="tool-card" id="priceAlerts">
+          <div class="tool-icon"><i class="fas fa-bell"></i></div>
+          <h4>Avvisi Prezzi</h4>
+        </div>
+        
+        <div class="tool-card" id="pacPlanner">
+          <div class="tool-icon"><i class="fas fa-sync-alt"></i></div>
+          <h4>Pianificatore PAC</h4>
+        </div>
+        
+        <div class="tool-card" id="monthlyReport">
+          <div class="tool-icon"><i class="fas fa-book"></i></div>
+          <h4>Report Mensile</h4>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Barra di navigazione in basso -->
+  <div class="nav-bar">
+    <a href="#" class="nav-item active" data-screen="marketScreen">
+      <i class="fas fa-chart-line"></i>
+      <span>Mercato</span>
+    </a>
+    <a href="#" class="nav-item" data-screen="portfolioScreen">
+      <i class="fas fa-wallet"></i>
+      <span>Portafoglio</span>
+    </a>
+    <a href="#" class="nav-item" data-screen="toolsScreen">
+      <i class="fas fa-tools"></i>
+      <span>Strumenti</span>
+    </a>
+  </div>
+
+  <div id="spinner" class="spinner"></div>
+</body>
+</html>
